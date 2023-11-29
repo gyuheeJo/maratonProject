@@ -1,8 +1,10 @@
 package com.example.maratonTeam.domain.service;
 
+import com.example.maratonTeam.domain.ParticipantDomain;
 import com.example.maratonTeam.domain.TeamDomain;
 import com.example.maratonTeam.domain.TeamGet;
 import com.example.maratonTeam.persistence.CompetenceRepository;
+import com.example.maratonTeam.persistence.ParticipantRepository;
 import com.example.maratonTeam.persistence.TeamCompetenceRepository;
 import com.example.maratonTeam.persistence.TeamRepository;
 import com.example.maratonTeam.persistence.entity.Team;
@@ -20,6 +22,9 @@ public class TeamService {
     private CompetenceRepository competenceRepository;
     @Autowired
     private TeamCompetenceRepository teamCompetenceRepository;
+
+    @Autowired
+    private ParticipantRepository participantRepository;
 
     public List<TeamGet> getAll(){
         return teamRepository.getAll();
@@ -43,6 +48,12 @@ public class TeamService {
 
     public boolean delete(int idTeam){
         return getTeam(idTeam).map(team -> {
+            List<ParticipantDomain> pds = team.getParticipants();
+            if (pds != null){
+                pds.forEach(pd->{
+                    participantRepository.setIdTeamNull(pd.getIdParticipant());
+                });
+            }
             teamRepository.delete(idTeam);
             return true;
         }).orElse(false);

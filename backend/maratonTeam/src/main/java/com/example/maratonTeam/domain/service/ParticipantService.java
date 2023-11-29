@@ -31,7 +31,13 @@ public class ParticipantService {
     }
 
     public boolean leaveTeam(String idParticipant){
-        return participantRepository.setIdTeamNull(idParticipant);
+        int idTeam = getParticipant(idParticipant).get().getIdTeam();
+        int teamSize = teamRepository.teamSize(idTeam);
+        boolean b = participantRepository.setIdTeamNull(idParticipant);
+        if (teamSize == 1){
+            teamRepository.delete(idTeam);
+        }
+        return b;
     }
     public boolean updateIdTeam(String idParticipant, Integer idTeam){
         int teamSize = teamRepository.teamSize(idTeam);

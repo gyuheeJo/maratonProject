@@ -34,7 +34,9 @@ public class TeamRepository {
 
     public int teamSize(int idTeam){
         return teamCrudRepository.findById(idTeam).map(team -> {
-            return team.getParticipants().size();
+            if (team.getParticipants() != null){
+                return team.getParticipants().size();
+            }return 0;
         }).orElse(-1);
     }
     public boolean isTeamRegistered(TeamGet team){
